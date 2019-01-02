@@ -15,16 +15,18 @@ def deal(deck):
 	    hand.append(card)
     return hand
 
+
 def play_again():
-    again = input("Do you want to play again? (Y/N) : ").lower()
-    if again == "y":
-	    dealer_hand = []
-	    player_hand = []
-	    deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]*4
-	    game2()
-    else:
-	    print("Bye!")
-	    exit()
+  again = input("Do you want to play again? (Y/N) : ").lower()
+  if again == "y":
+    dealer_hand = []
+    player_hand = []
+    deck = [2,3,4,5,6,7,8,9,10,11,12,13,14]*4
+    game()
+  else:
+    print("Bye!")
+    exit()
+
 
 def total(hand):
     total = 0
@@ -57,17 +59,17 @@ def recommendation(dealer_hand, player_hand):
   if card == "J" or card == "Q" or card == "K" or card =="A":card=10
   player_total = total(player_hand)
   if player_total > 16:
-    print('You should stand')
+    print('You should stand.')
   elif player_total > 12 and card < 7:
-    print('You should stand')
+    print('You should stand.')
   elif player_total < 12:
-    print('You should hit')
+    print('You should hit.')
   elif player_total < 17 and card > 6:
-    print('You should hit')
+    print('You should hit.')
   elif player_total == 12 and card > 3 and card < 7:
-    print('You should stand')
+    print('You should stand.')
   else:
-    print('You should hit')
+    print('You should hit.')
 
 def print_results(dealer_hand, player_hand):
 	clear()
@@ -83,6 +85,15 @@ def blackjack(dealer_hand, player_hand):
 		print_results(dealer_hand, player_hand)		
 		print ("Sorry, you lose. The dealer got a blackjack.\n")
 		play_again()
+
+def count_cards(dealer_hand, player_hand):
+  count = 0
+  hands = dealer_hand + player_hand
+  for card in hands:
+    if card == "J" or card == "Q" or card == "K" or card =="A":card=10
+    if card < 6: count+=1
+    elif card >= 10: count-=1
+  print("The current count is " + str(count))
 
 
 def score(dealer_hand, player_hand):
@@ -105,36 +116,9 @@ def score(dealer_hand, player_hand):
 	  print_results(dealer_hand, player_hand)			   
 	  print ("Congratulations. Your score is higher than the dealer. You win\n")
 
+
+
 def game():
-  choice = 0
-  clear()
-  print("WELCOME TO BLACKJACK!\n")
-  dealer_hand = deal(deck)
-  player_hand = deal(deck)
-  while choice != "q":
-    print("The dealer is showing a " + str(dealer_hand[0]))
-    print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
-    recommendation(dealer_hand, player_hand)
-    blackjack(dealer_hand, player_hand)
-    choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
-    clear()
-    if choice == "h":
-      hit(player_hand)
-      while total(dealer_hand) < 17:
-        hit(dealer_hand)
-      score(dealer_hand, player_hand)
-      play_again()
-    elif choice == "s":
-      while total(dealer_hand) < 17:
-        hit(dealer_hand)
-      score(dealer_hand, player_hand)
-      play_again()
-    elif choice == "q":
-      print("Bye!")
-      exit()
-
-
-def game2():
   choice = 0
   clear()
   print("WELCOME TO BLACKJACK!\n")
@@ -159,9 +143,10 @@ def game2():
     while total(dealer_hand) < 17:
       hit(dealer_hand)
     score(dealer_hand, player_hand)
+    count_cards(dealer_hand, player_hand)
     play_again()
 
     
 
 if __name__ == "__main__":
-    game2()
+    game()
