@@ -161,16 +161,23 @@ def recommendation(dealer_hand, user_hand):
   card = dealer_hand[0]
   value = getAmount(card)
   player_total = getTotal(user_hand)
-  if player_total > 16 or (player_total > 12 and value <7) or (player_total == 12 and value > 3 and value <7):
+  if player_total > 16 or (player_total > 12 and value <7) or (player_total == 12 and value > 3 and value <7) and player_total <= 21:
     feedback = 'You should stand'
   else:
     feedback = 'You should hit'
   return feedback
 
+def count_cards(dealer_hand, player_hand, count):
+  hands = dealer_hand + player_hand
+  for card in hands:
+    value = getAmount(card)
+    if value >= 10: count-=1
+    if value <= 6: count +=1
+  return count
 
 def main():
   #local variables
-  deck = copy.copy(cards)
+  deck = copy.copy(cards)*6
   random.shuffle(deck)
   original_deck_len = len(deck)
   stand = False
@@ -179,7 +186,8 @@ def main():
   winNum = 0
   loseNum = 0
   feedback = ''
-  cardCount = 0
+  result = ''
+  count = 0
 
 
   #init game
@@ -191,7 +199,6 @@ def main():
   standTxt = font.render('Stand', 1, black)
   restartTxt = font.render('Restart', 1, black)
   gameoverTxt = font.render('GAME OVER', 1, white)
-  feedbackTxt = font.render(feedback, 1, white)
   userSum, userA, dealSum, dealA = initGame(deck, user_hand, dealer_hand)
 
   #fill background
@@ -210,11 +217,16 @@ def main():
       gameover = True
     elif len(dealer_hand) == 2 and dealSum == 21:
       gameover = True
+    
+    if userSum < 21 and not stand:
+      feedback = recommendation(dealer_hand, user_hand)
+    else:
+      feedback = 'User: ' + str(userSum) + ' Dealer: ' + str(dealSum)
 
     #background update for wins and losses
     winTxt = font.render('Wins: %i' % winNum, 1, black)
     loseTxt = font.render('Losses: %i' %loseNum, 1, black)
-
+    feedbackTxt = font.render(feedback, 1, white)
 
     #event listener on buttons
     for event in pygame.event.get():
@@ -224,22 +236,39 @@ def main():
         #hit and give player card, so long as player doesn't break blackjack rules
         card, cA = dealCard(deck, user_hand)
         userA += cA
-        userSum = getTotal(user_hand)
+        userSum += getAmount(card)
+        while userSum > 21 and userA > 0:
+          userA -= 1
+          userSum -=10
         print('User %i' % userSum)
+        if userSum == 21:
+          result = 'YOU WON'
       elif event.type == pygame.MOUSEBUTTONDOWN and not gameover and standB.collidepoint(pygame.mouse.get_pos()):
         #when player stands, the dealer  plays
         stand = True
         while dealSum<= userSum and dealSum < 17:
           card, cA = dealCard(deck, dealer_hand)
           dealA += cA
-          dealSum = getTotal(dealer_hand)
+          dealSum += getAmount(card)
+          while dealSum > 21 and dealA > 0:
+            dealA -= 1
+            dealSum -= 10
           print('Dealer: %i' % dealSum)
+        if (userSum <= 21 and dealSum < userSum) or dealSum >21:
+          result = 'YOU WON'
+        elif userSum == dealSum:
+          result = 'PUSH'
+        else:
+          result = 'YOU LOST'
+        feedback = 'User had ' + str(userSum) + ' and dealer had ' + str(dealSum)
+        count = count_cards(dealer_hand, user_hand, count)
+        print('The count is now: '+ str(count))
       elif event.type == pygame.MOUSEBUTTONDOWN and (gameover or stand) and restartB.collidepoint(pygame.mouse.get_pos()):
         if userSum == dealSum:
           pass
         elif userSum <= 21 and len(user_hand) == 5:
           winNum += 1
-        elif userSum <= 21 and dealSum < userSum or dealSum > 21:
+        elif (userSum <= 21 and dealSum < userSum) or dealSum > 21:
           winNum += 1
         else:
           loseNum += 1
@@ -247,6 +276,7 @@ def main():
         stand = False
         user_hand = []
         dealer_hand = []
+        feedback = ''
         if len(deck) <=10:
           print('Shuffling deck')
           deck = copy.copy(cards)
@@ -259,20 +289,26 @@ def main():
     screen.blit(standTxt, (116, 448))
     screen.blit(winTxt, (565, 423))
     screen.blit(loseTxt, (565,448))
+    screen.blit(feedbackTxt, (300, 448))
 
+    #print dealer hand
     for card in dealer_hand:
       x = 10 + dealer_hand.index(card)*110
       screen.blit(card, (x,10))
     screen.blit(cBack, (120, 10))
 
+    #print user hand
     for card in user_hand:
       x = 10 + user_hand.index(card)*110
       screen.blit(card, (x, 295))
 
+
     if gameover or stand:
       screen.blit(gameoverTxt, (270, 200))
       restartB = pygame.draw.rect(background, gray, (270,225,75, 25))
+      resultTxt = font.render(result, 1, white)
       screen.blit(restartTxt, (287, 228))
+      screen.blit(resultTxt, (270, 175))
       screen.blit(dealer_hand[1], (120, 10))
     
     pygame.display.update()
