@@ -156,15 +156,16 @@ def initGame(cList, uList, dList):
 def discard(deck):
   deck.pop()
 
+#does not account for aces in player_total, needs to be fixed
 def recommendation(dealer_hand, user_hand):
   feedback = ''
   card = dealer_hand[0]
   value = getAmount(card)
   player_total = getTotal(user_hand)
   if player_total > 16 or (player_total > 12 and value <7) or (player_total == 12 and value > 3 and value <7) and player_total <= 21:
-    feedback = 'You should stand'
+    feedback = 'You have ' + str(player_total)+ ', you should stand'
   else:
-    feedback = 'You should hit'
+    feedback = 'You have ' + str(player_total) + ', you should hit'
   return feedback
 
 def count_cards(dealer_hand, player_hand, count):
