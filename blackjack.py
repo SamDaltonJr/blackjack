@@ -178,6 +178,7 @@ def count_cards(dealer_hand, player_hand, count):
 def main():
   #local variables
   deck = copy.copy(cards)*6
+  original_deck = deck
   random.shuffle(deck)
   original_deck_len = len(deck)
   stand = False
@@ -194,7 +195,7 @@ def main():
   pygame.init()
   screen = pygame.display.set_mode((640,480))
   pygame.display.set_caption('Blackjack Card Counter')
-  font = pygame.font.SysFont('arial', 15)
+  font = pygame.font.SysFont('helvetica', 15)
   hitTxt = font.render('Hit', 1, black)
   standTxt = font.render('Stand', 1, black)
   restartTxt = font.render('Restart', 1, black)
@@ -277,10 +278,11 @@ def main():
         user_hand = []
         dealer_hand = []
         feedback = ''
-        if len(deck) <=10:
+        if len(deck) <= (original_deck_len* .10):
           print('Shuffling deck')
-          deck = copy.copy(cards)
+          deck = original_deck
           random.shuffle(deck)
+          count = 0
         userSum, userA, dealSum, dealA = initGame(deck, user_hand, dealer_hand)
         restartB = pygame.draw.rect(background, (60,115,10),(270,225,75,25))
     
@@ -290,6 +292,12 @@ def main():
     screen.blit(winTxt, (565, 423))
     screen.blit(loseTxt, (565,448))
     screen.blit(feedbackTxt, (300, 448))
+    if count < 0:
+        countColor = (255, 0, 0)
+    else:
+        countColor = white
+    countTxt = font.render('Count : ' + str(count), 1, countColor)
+    screen.blit(countTxt, (565, 400))
 
     #print dealer hand
     for card in dealer_hand:
@@ -310,6 +318,7 @@ def main():
       screen.blit(restartTxt, (287, 228))
       screen.blit(resultTxt, (270, 175))
       screen.blit(dealer_hand[1], (120, 10))
+      
     
     pygame.display.update()
 
