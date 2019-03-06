@@ -6,7 +6,7 @@ My application is a blackjack app that lets you play 1-on-1 with the dealer and 
 
 ## What is Blackjack?
 
-Blackjack is a gambling card game in which players try to acquire cards with a face value as close as possible to twenty-one without going over. The game is played with anywhere from one to eight 52-card decks where suit does not matter.
+Blackjack is a gambling card game in which players try to acquire cards with a face value as close as possible to twenty-one without going over. The game is played with 52-card decks where suit does not matter.
 
 ### Rules
 
