@@ -25,6 +25,14 @@ Blackjack is a gambling card game in which players try to acquire cards with a f
 9. If the dealer does not bust, then the higher point total between the player and the dealer will win
 
 
+## How to Play
+
+### Instructions
+
+1. [Download](https://www.python.org/downloads/) and install Python
+2. [Download](https://www.pygame.org/download.shtml) and install Pygame.
+3. In a command line environment inside the blackjack folder, run the blackjack.py program with the command `py blackjack.py`
+
 ## Features
 
 ### Live
